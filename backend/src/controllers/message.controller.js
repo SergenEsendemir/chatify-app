@@ -68,31 +68,39 @@ export const getChatPartners = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
 
-    //find all the messages where the logged-in user is either the sender or receiver
-
+    // 1️⃣ Kendine atılan mesajları DB seviyesinde ele
     const messages = await Message.find({
-      $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+      $or: [
+        {
+          senderId: loggedInUserId,
+          receiverId: { $ne: loggedInUserId },
+        },
+        {
+          receiverId: loggedInUserId,
+          senderId: { $ne: loggedInUserId },
+        },
+      ],
     });
 
+    // 2️⃣ Karşı tarafın userId'sini çıkar
     const chatPartnerIds = [
       ...new Set(
-        messages.map((msg) => {
-          if (msg.senderId.toString() === loggedInUserId.toString()) {
-            return msg.receiverId.toString();
-          } else {
-            return msg.senderId.toString();
-          }
-        })
+        messages.map((msg) =>
+          msg.senderId.toString() === loggedInUserId.toString()
+            ? msg.receiverId.toString()
+            : msg.senderId.toString()
+        )
       ),
     ];
 
+    // 3️⃣ Kullanıcı bilgilerini getir
     const chatPartners = await User.find({
       _id: { $in: chatPartnerIds },
     }).select('-password');
 
-    res.status(200).json(chatPartners);
+    return res.status(200).json(chatPartners);
   } catch (err) {
-    console.log('Error in getChatPartners:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getChatPartners:', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
