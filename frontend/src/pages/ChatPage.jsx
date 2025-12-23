@@ -3,7 +3,7 @@ import BorderAnimatedContainer from '../components/BorderAnimatedContainer';
 import ChatContainer from '../components/ChatContainer';
 import ChatsList from '../components/ChatsList';
 import ContactList from '../components/ContactList';
-import NoConversationPlaceHolder from '../components/NoConversationPlaceHolder';
+import NoConversationPlaceholder from '../components/NoConversationPlaceholder';
 import ProfileHeader from '../components/ProfileHeader';
 import { useChatStore } from '../store/useChatStore';
 
@@ -26,7 +26,7 @@ function ChatPage() {
 
         {/* RIGHT SIDE */}
         <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm text-slate-100">
-          {selectedUser ? <ChatContainer /> : <NoConversationPlaceHolder />}
+          {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
       </BorderAnimatedContainer>
     </div>
